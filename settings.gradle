@@ -1,0 +1,4 @@
+include ':resolution'
+include ':expression'
+include ':app'
+rootProject.name = "Resolution"
