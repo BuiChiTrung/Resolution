@@ -3,6 +3,7 @@ package Util;
 import Component.Expression;
 import Component.KnowledgeBase;
 import Component.Variable;
+import Container.Container;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -50,20 +51,24 @@ public class Utils {
         return new Variable("Empty", false);
     }
 
-    public static String predictUsingUserInput (String ruleString, String clauseString) {
-        KnowledgeBase KB = new KnowledgeBase();
-
-        addRuleToKB(ruleString, KB);
-        Expression clause = ExpressionUtils.convertStringToExpression(clauseString);
-
-        return RobinsonUtils.predict(KB, clause);
+    public static void parseUserInput (String ruleString, String predictString) {
+        Container.KB = new KnowledgeBase();
+        addRulesToKB(ruleString);
+        addPredictToKB(predictString);
+        //        return RobinsonUtils.predict(Container.KB, clause);
     }
 
-    public static void addRuleToKB(String ruleString, KnowledgeBase KB) {
+    private static void addRulesToKB(String ruleString) {
         String[] ruleList = ruleString.split("\n");
         for (String rule : ruleList) {
-            KB.add(ExpressionUtils.extractAllOrExpressionFromString(rule));
+            Container.KB.add(ExpressionUtils.extractAllOrExpressionFromString(rule));
         }
+    }
+
+    private static void addPredictToKB(String predictString) {
+        Expression predict = ExpressionUtils.convertStringToExpression(predictString);
+        predict.reverse();
+        Container.KB.add(ExpressionUtils.extractAllOrExpression(predict));
     }
     
 

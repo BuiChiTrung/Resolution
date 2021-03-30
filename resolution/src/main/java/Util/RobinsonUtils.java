@@ -1,65 +1,23 @@
 package Util;
 
 import Component.*;
+import Container.Container;
 
 import java.util.ArrayList;
 
 public class RobinsonUtils {
-//    public static String predict(KnowledgeBase knowledgeBase, Expression expression) {
-//        if(robinson(knowledgeBase, expression)) {
-//            return "Clause is true";
-//        }
-//        Expression reversedExpression = expression.copy();
-//        reversedExpression.reverse();
-//        if(robinson(knowledgeBase, reversedExpression)) {
-//            return "Clause is false";
-//        }
-//        return "Cannot predict";
-//    }
-//
-//    //Áp dụng thuật toán robinson vs initKB và mệnh đề muốn dự đoán đúng hay không ?
-//    public static boolean robinson(KnowledgeBase initKnowledgeBase, Expression predictingClause) {
-//        KnowledgeBase knowledgeBase = initKnowledgeBase.copy();
-//        predictingClause.reverse();
-//        knowledgeBase.add(ExpressionUtils.extractAllOrExpression(predictingClause));
-//        ArrayList<OrExpression> listOfExpression = knowledgeBase.getOrExpressionList();
-//
-//        int stepCounter = 1;
-//        while(!knowledgeBase.empty()) {
-////            System.out.println("Step " + Integer.toString(stepCounter) + "\n");
-//            stepCounter++;
-//            for(int i = 1; i < listOfExpression.size(); i++) {
-//                if(ableToResolve(listOfExpression.get(0), listOfExpression.get(i))) {
-//                    OrExpression newRule = resolve(listOfExpression.get(0), listOfExpression.get(i));
-//                    if(newRule.isEmpty()) {
-//                        return true;
-//                    }
-//                    listOfExpression.add(newRule);
-//                }
-//            }
-////            System.out.println(knowledgeBase.toString());
-//            listOfExpression.remove(0);
-//        }
-//        return false;
-//    }
+    public static String predict(KnowledgeBase knowledgeBase, Expression predictingClause) {
+        predictingClause.reverse();
+        knowledgeBase.add(ExpressionUtils.extractAllOrExpression(predictingClause));
 
-    public static String predict(KnowledgeBase knowledgeBase, Expression expression) {
-        if(robinson(knowledgeBase, expression)) {
+        if(robinson(knowledgeBase)) {
             return "Clause is true";
-        }
-        Expression reversedExpression = expression.copy();
-        reversedExpression.reverse();
-        if(robinson(knowledgeBase, reversedExpression)) {
-            return "Clause is false";
         }
         return "Cannot predict";
     }
 
     //Áp dụng thuật toán robinson vs initKB và mệnh đề muốn dự đoán đúng hay không ?
-    public static boolean robinson(KnowledgeBase initKnowledgeBase, Expression predictingClause) {
-        KnowledgeBase knowledgeBase = initKnowledgeBase.copy();
-        predictingClause.reverse();
-        knowledgeBase.add(ExpressionUtils.extractAllOrExpression(predictingClause));
+    public static boolean robinson(KnowledgeBase knowledgeBase) {
         ArrayList<OrExpression> listOfExpression = knowledgeBase.getOrExpressionList();
 
         int stepCounter = 1;
@@ -77,6 +35,34 @@ public class RobinsonUtils {
             }
 //            System.out.println(knowledgeBase.toString());
             listOfExpression.remove(0);
+        }
+        return false;
+    }
+
+
+    /**
+     * Chạy từng bước lặp của robinson thay vì in luôn ra kết quả
+     * @return true: robinson finishes, false otherwise
+     */
+    public static boolean robinsonStepByStep() {
+        ArrayList<OrExpression> listOfExpression = Container.KB.getOrExpressionList();
+        Container.KBIteratingPos++;
+        int i = Container.KBIteratingPos;
+
+        if (i >= listOfExpression.size()) return true;
+
+        Container.resolvableIndex.clear();
+        for (int j = i + 1; j < listOfExpression.size(); ++j) {
+            if (ableToResolve(listOfExpression.get(i), listOfExpression.get(j))) {
+                Container.resolvableIndex.add(j);
+                OrExpression newKnowledge = resolve(listOfExpression.get(i), listOfExpression.get(j));
+
+                if (newKnowledge.isEmpty()) {
+                    Container.predictResult = true;
+                    return true;
+                }
+                listOfExpression.add(newKnowledge);
+            }
         }
         return false;
     }
