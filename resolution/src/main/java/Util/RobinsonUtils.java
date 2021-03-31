@@ -6,22 +6,22 @@ import Container.Container;
 import java.util.ArrayList;
 
 public class RobinsonUtils {
-    public static String predict(KnowledgeBase knowledgeBase, Expression predictingClause) {
+    public static String predict(Expression predictingClause) {
         predictingClause.reverse();
-        knowledgeBase.add(ExpressionUtils.extractAllOrExpression(predictingClause));
+        Container.KB.add(ExpressionUtils.extractAllOrExpression(predictingClause));
 
-        if(robinson(knowledgeBase)) {
+        if(robinson()) {
             return "Clause is true";
         }
         return "Cannot predict";
     }
 
     //Áp dụng thuật toán robinson vs initKB và mệnh đề muốn dự đoán đúng hay không ?
-    public static boolean robinson(KnowledgeBase knowledgeBase) {
-        ArrayList<OrExpression> listOfExpression = knowledgeBase.getOrExpressionList();
+    public static boolean robinson() {
+        ArrayList<OrExpression> listOfExpression = Container.KB.getOrExpressionList();
 
         int stepCounter = 1;
-        while(!knowledgeBase.empty()) {
+        while(!Container.KB.empty()) {
 //            System.out.println("Step " + Integer.toString(stepCounter) + "\n");
             stepCounter++;
             for(int i = 1; i < listOfExpression.size(); i++) {

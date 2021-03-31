@@ -9,17 +9,19 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.Scanner;
 
+import static Container.Container.KB;
+
 public class Utils {
     //hàm End-to-end dự đoán từ file các luật và file mệnh đề
     public static String predictUsingFile (String rulesPath, String clausePath) {
-        KnowledgeBase KB = new KnowledgeBase();
-        getRulesFromFile(rulesPath, KB);
+        Container.KB = new KnowledgeBase();
+        getRulesFromFile(rulesPath);
         Expression clause = getPredictingClauseFromFile(clausePath);
-        return RobinsonUtils.predict(KB, clause);
+        return RobinsonUtils.predict(clause);
     }
 
     //Đọc các luật từ file và cho vào knowledge base
-    public static void getRulesFromFile(String path, KnowledgeBase KB) {
+    public static void getRulesFromFile(String path) {
         try {
             File file = new File(path);
             Scanner reader = new Scanner(file);
@@ -52,7 +54,7 @@ public class Utils {
     }
 
     public static void parseUserInput (String ruleString, String predictString) {
-        Container.KB = new KnowledgeBase();
+        KB = new KnowledgeBase();
         addRulesToKB(ruleString);
         addPredictToKB(predictString);
         //        return RobinsonUtils.predict(Container.KB, clause);
@@ -61,14 +63,14 @@ public class Utils {
     private static void addRulesToKB(String ruleString) {
         String[] ruleList = ruleString.split("\n");
         for (String rule : ruleList) {
-            Container.KB.add(ExpressionUtils.extractAllOrExpressionFromString(rule));
+            KB.add(ExpressionUtils.extractAllOrExpressionFromString(rule));
         }
     }
 
     private static void addPredictToKB(String predictString) {
         Expression predict = ExpressionUtils.convertStringToExpression(predictString);
         predict.reverse();
-        Container.KB.add(ExpressionUtils.extractAllOrExpression(predict));
+        KB.add(ExpressionUtils.extractAllOrExpression(predict));
     }
     
 

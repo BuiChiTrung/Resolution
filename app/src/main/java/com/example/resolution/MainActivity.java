@@ -1,8 +1,10 @@
 package com.example.resolution;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.constraintlayout.widget.ConstraintLayout;
 
 import android.os.Bundle;
+import android.text.method.KeyListener;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -22,6 +24,7 @@ import Util.Utils;
  * 3. Reset: thuật toán robinson hoàn thành
  */
 public class MainActivity extends AppCompatActivity {
+    private static ConstraintLayout constraintLayout;
     private static TextView explanation;
     private static EditText knowledgeBase;
     private static EditText prediction;
@@ -39,6 +42,9 @@ public class MainActivity extends AppCompatActivity {
 
     // State 1
     public void initUIState() {
+        constraintLayout = findViewById(R.id.constraintView);
+//        constraintLayout.getBackground().setAlpha(220);
+
         explanation = findViewById(R.id.explanation);
         explanation.setVisibility(View.INVISIBLE);
         explanation.setText("");
@@ -124,10 +130,10 @@ public class MainActivity extends AppCompatActivity {
     private void notifyPredictResult() {
         String KBString = knowledgeBase.getText().toString();
         if (Container.predictResult) {
-            KBString = KBString + "\n" + "Clause is true";
+            KBString = KBString  + "Clause is true";
         }
         else {
-            KBString = KBString + "\n" + "Cannot predict";
+            KBString = KBString  + "Cannot predict";
         }
         knowledgeBase.setText(KBString);
     }
